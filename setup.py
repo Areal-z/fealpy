@@ -26,12 +26,23 @@ ext_modules_dict={
             sources=['fealpy/solver/mumps/_dmumps.pyx'],
             libraries=['dmumps', 'mumps_common'],
             ),
+        "pangulu": Extension(
+            'fealpy.solver.pangulu._pangu_r64_cpu',
+            sources=['fealpy/solver/pangulu/_pangulu_r64_cpu.pyx'],
+            libraries=[f'pangulu_r64_cpu'],
+            library_dirs=[os.path.abspath('/usr/local/pangulu/lib')],
+            include_dirs=['/usr/local/pangulu/include'],  # 指向生成的头文件
+            extra_compile_args=['-fopenmp'],
+            extra_link_args=['-fopenmp']
+            ),
         }
 
 def get_ext_modules():
     ext_modules = []
     if os.getenv("WITH_MUMPS"):
         ext_modules.append(ext_modules_dict['mumps'])
+    if os.getenv("WITH_PANGULU"):
+        ext_modules.append(ext_modules_dict['pangulu'])
     return ext_modules
 
 
